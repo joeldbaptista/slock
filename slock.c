@@ -4,20 +4,20 @@
 #include <shadow.h>
 #endif
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/Xrandr.h>
+#include <X11/keysym.h>
 #include <ctype.h>
 #include <errno.h>
 #include <grp.h>
 #include <pwd.h>
 #include <stdarg.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/types.h>
-#include <X11/extensions/Xrandr.h>
-#include <X11/keysym.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include <unistd.h>
 
 #include "arg.h"
 #include "util.h"
@@ -198,7 +198,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 				oldc = color;
 			}
 		} else if (rr->active && ev.type == rr->evbase + RRScreenChangeNotify) {
-			rre = (XRRScreenChangeNotifyEvent*)&ev;
+			rre = (XRRScreenChangeNotifyEvent *)&ev;
 			for (screen = 0; screen < nscreens; screen++) {
 				if (locks[screen]->win == rre->window) {
 					XResizeWindow(dpy, locks[screen]->win,
@@ -206,8 +206,9 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					XClearWindow(dpy, locks[screen]->win);
 				}
 			}
-		} else for (screen = 0; screen < nscreens; screen++)
-			XRaiseWindow(dpy, locks[screen]->win);
+		} else
+			for (screen = 0; screen < nscreens; screen++)
+				XRaiseWindow(dpy, locks[screen]->win);
 	}
 }
 
@@ -253,7 +254,8 @@ lockscreen(Display *dpy, struct xrandr *rr, int screen)
 		if (ptgrab != GrabSuccess) {
 			ptgrab = XGrabPointer(dpy, lock->root, False,
 			                      ButtonPressMask | ButtonReleaseMask |
-			                      PointerMotionMask, GrabModeAsync,
+			                          PointerMotionMask,
+			                      GrabModeAsync,
 			                      GrabModeAsync, None, invisible, CurrentTime);
 		}
 		if (kbgrab != GrabSuccess) {
@@ -296,7 +298,8 @@ usage(void)
 }
 
 int
-main(int argc, char **argv) {
+main(int argc, char **argv)
+{
 	struct xrandr rr;
 	struct lock **locks;
 	struct passwd *pwd;
@@ -307,13 +310,15 @@ main(int argc, char **argv) {
 	Display *dpy;
 	int s, nlocks, nscreens;
 
-	ARGBEGIN {
+	ARGBEGIN
+	{
 	case 'v':
-		fprintf(stderr, "slock-"VERSION"\n");
+		fprintf(stderr, "slock-" VERSION "\n");
 		return 0;
 	default:
 		usage();
-	} ARGEND
+	}
+	ARGEND
 
 	/* validate drop-user and -group */
 	errno = 0;
